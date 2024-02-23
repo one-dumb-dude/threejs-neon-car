@@ -1,7 +1,7 @@
 'use client';
 
 import {Canvas} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
+import {OrbitControls, PerspectiveCamera} from "@react-three/drei";
 import RotatingCube from "@/components/threejs/objects/RotatingCube";
 import FloorPlane from "@/components/threejs/objects/FloorPlane";
 import {PCFSoftShadowMap} from "three";
@@ -18,13 +18,12 @@ export default function ThreeJsScene() {
                 gl.shadowMap.enabled = true;
                 gl.shadowMap.type = PCFSoftShadowMap; // Consider using soft shadows for better lighting
             }}
-            camera={{position: [2, 2, 2]}}
         >
             <ambientLight intensity={0.75}/>
             <spotLight
                 position={[0, 2, 1]}
                 angle={2}
-                penumbra={1}
+                penumbra={2}
                 intensity={5}
                 castShadow
             />
@@ -33,7 +32,9 @@ export default function ThreeJsScene() {
 
             <FloorPlane/>
 
-            <OrbitControls/>
+            <OrbitControls />
+
+            <PerspectiveCamera makeDefault fov={75} position={[2, 1, 2]}/>
         </Canvas>
     )
 }
