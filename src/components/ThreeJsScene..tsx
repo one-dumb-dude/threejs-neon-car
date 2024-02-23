@@ -3,7 +3,8 @@
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls, PerspectiveCamera} from "@react-three/drei";
 import RotatingCube from "@/components/threejs/objects/RotatingCube";
-import FloorPlane from "@/components/threejs/objects/FloorPlane";
+import Ground from "@/components/threejs/objects/Ground";
+import Car from "@/components/threejs/objects/Car";
 import {PCFSoftShadowMap} from "three";
 
 export default function ThreeJsScene() {
@@ -19,22 +20,34 @@ export default function ThreeJsScene() {
                 gl.shadowMap.type = PCFSoftShadowMap; // Consider using soft shadows for better lighting
             }}
         >
-            <ambientLight intensity={0.75}/>
+            <ambientLight intensity={0.55}/>
             <spotLight
-                position={[0, 2, 1]}
-                angle={2}
-                penumbra={2}
-                intensity={5}
+                color={[1, 0.25, 0.7]}
+                intensity={60.5}
+                angle={0.6}
+                penumbra={0.5}
+                position={[5, 5, 0]}
                 castShadow
+                shadow-bias={-0.0001}
             />
 
-            <RotatingCube/>
+            <spotLight
+                color={[0.14, 0.5, 1]}
+                intensity={90}
+                angle={0.6}
+                penumbra={0.5}
+                position={[-5, 5, 0]}
+                castShadow
+                shadow-bias={-0.0001}
+            />
 
-            <FloorPlane/>
+            <Car />
 
-            <OrbitControls />
+            <Ground/>
 
-            <PerspectiveCamera makeDefault fov={75} position={[2, 1, 2]}/>
+            <OrbitControls target={[0, -0.5, 0]}/>
+
+            <PerspectiveCamera makeDefault fov={75} position={[-4, 1, 1]}/>
         </Canvas>
     )
 }

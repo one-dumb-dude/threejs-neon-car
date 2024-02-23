@@ -1,5 +1,5 @@
 import {useEffect, useRef} from "react";
-import {Mesh, TextureLoader, Vector3} from "three";
+import {LinearSRGBColorSpace, Mesh, NoColorSpace, TextureLoader, Vector3} from "three";
 import {useFrame, useLoader} from "@react-three/fiber";
 
 export default function RotatingCube() {
@@ -13,6 +13,9 @@ export default function RotatingCube() {
         '/textures/cube/tile_normal.bmp',
         '/textures/cube/tile_smoothness.bmp',
     ]);
+
+    normalMap.colorSpace = NoColorSpace;
+    diffuseMap.colorSpace = LinearSRGBColorSpace;
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {

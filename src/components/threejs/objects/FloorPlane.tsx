@@ -1,5 +1,5 @@
 import {useLoader} from "@react-three/fiber";
-import {RepeatWrapping, TextureLoader} from "three";
+import {LinearSRGBColorSpace, NoColorSpace, RepeatWrapping, TextureLoader} from "three";
 
 export default function FloorPlane() {
     const textures = useLoader(TextureLoader, [
@@ -19,6 +19,9 @@ export default function FloorPlane() {
     });
 
     const [aoMap, diffuseMap, heightMap, metallicMap, normalMap, smoothMap ] = textures;
+
+    normalMap.colorSpace = NoColorSpace;
+    diffuseMap.colorSpace = LinearSRGBColorSpace;
 
     return (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow >
