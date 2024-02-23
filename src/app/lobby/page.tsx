@@ -1,5 +1,6 @@
 import Player from "@/modules/Player";
 import ThreeJsScene from "@/components/ThreeJsScene.";
+import {Suspense} from "react";
 
 export default function Lobby() {
     const wizard = new Player('Henry', 100);
@@ -9,7 +10,9 @@ export default function Lobby() {
             <div className="w-full h-full">
                 <h2>Lobby</h2>
                 <p>{wizard.greet()}</p>
-                <ThreeJsScene/>
+                <Suspense fallback={<div>Esperate! chucha su madre...</div>}>
+                    <ThreeJsScene/>
+                </Suspense>
             </div>
         </main>
     )
