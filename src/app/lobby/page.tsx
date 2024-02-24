@@ -6,7 +6,7 @@ export default function Lobby() {
     const wizard = new Player('Henry', 100);
 
     return (
-        <main className="w-screen h-screen">
+        <main className="h-screen">
             <div className="w-full h-full">
                 <h2>Lobby</h2>
                 <p>{wizard.greet()}</p>

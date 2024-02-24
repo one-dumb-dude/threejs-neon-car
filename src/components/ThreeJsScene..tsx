@@ -9,6 +9,7 @@ import Rings from "@/components/threejs/objects/Rings";
 import FloatingBoxes from "@/components/threejs/objects/FloatingBoxes";
 import {Bloom, ChromaticAberration, DepthOfField, EffectComposer} from "@react-three/postprocessing";
 import {BlendFunction} from 'postprocessing';
+import FloatingGrid from "@/components/threejs/objects/FloatingGrid";
 
 export default function ThreeJsScene() {
 
@@ -25,7 +26,7 @@ export default function ThreeJsScene() {
         >
             <color attach="background" args={[0, 0, 0]}/>
 
-            <ambientLight intensity={0.2}/>
+            <ambientLight intensity={0.05}/>
 
             <directionalLight
                 color={new Color(1, 0.25, 0.7)} // Color in RGB
@@ -57,6 +58,8 @@ export default function ThreeJsScene() {
             <Rings/>
 
             <FloatingBoxes/>
+
+            <FloatingGrid />
 
             <Ground/>
 

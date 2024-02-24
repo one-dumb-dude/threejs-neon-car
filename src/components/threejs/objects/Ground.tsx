@@ -1,4 +1,4 @@
-import {useLoader} from "@react-three/fiber";
+import {useFrame, useLoader} from "@react-three/fiber";
 import {LinearSRGBColorSpace, NoColorSpace, RepeatWrapping, TextureLoader} from "three";
 import {MeshReflectorMaterial} from "@react-three/drei";
 
@@ -20,6 +20,12 @@ export default function Ground() {
     normal.colorSpace = NoColorSpace;
     rough.colorSpace = LinearSRGBColorSpace;
 
+    useFrame((state, delta) => {
+        const t = -state.clock.getElapsedTime() * 0.128;
+        rough.offset.set(0, t);
+        normal.offset.set(0, t);
+    });
+
     return (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} castShadow receiveShadow >
             <planeGeometry args={[30, 30]}/>
@@ -29,7 +35,7 @@ export default function Ground() {
                 roughnessMap={rough}
                 dithering={true}
                 color={[0.015, 0.015, 0.015]}
-                roughness={0.7}
+                roughness={0.4}
                 blur={[10000, 4000]}
                 mixBlur={30}
                 mixStrength={80}

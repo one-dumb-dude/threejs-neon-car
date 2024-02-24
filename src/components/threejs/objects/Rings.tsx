@@ -6,17 +6,20 @@ export default function Rings() {
     const itemsRef = useRef<(Mesh | null)[]>([]);
     const rings = new Array(14).fill(null);
 
-    useFrame(() => {
-        itemsRef.current.forEach((item, index) => {
-            if (item) {
-                const mesh = item;
-                const z = (index - 7) * 3.5;
-                mesh?.position.set(0, 0, -z);
+    useFrame((state) => {
+        itemsRef.current.forEach((mesh, index) => {
+            if (mesh) {
+                const elapsed = state.clock.getElapsedTime();
+                // to make rings stand still, use below
+                // const z = (index - 7) * 3.5;
+                // to animate rings, use below:
+                const z = (index - 7) * 3.5 + (( elapsed * 0.4) % 3.5) * 2;
+                mesh.position.set(0, 0, -z);
 
                 const dist = 1 - Math.abs(z) * 0.04;
-                mesh?.scale.set(dist, dist, dist);
+                mesh.scale.set(dist, dist, dist);
 
-                const material = item.material as MeshStandardMaterial;
+                const material = mesh.material as MeshStandardMaterial;
 
                 const colorScale = (dist > 2) ? 1 - (Math.min(dist, 12) - 2) / 10 : 0.5;
 
