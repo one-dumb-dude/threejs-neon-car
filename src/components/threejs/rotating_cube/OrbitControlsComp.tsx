@@ -16,6 +16,17 @@ export default function OrbitControlsComp() {
     });
 
     return(
-        <OrbitControls ref={orbitRef}/>
+        <OrbitControls
+            ref={orbitRef}
+            minAzimuthAngle={-Math.PI / 6}
+            maxAzimuthAngle={Math.PI / 6}
+            minPolarAngle={Math.PI / 8}
+            maxPolarAngle={Math.PI - Math.PI / 8}
+            minDistance={3}
+            maxDistance={10}
+            enableDamping
+            dampingFactor={0.1}
+            rotateSpeed={0.5}
+        />
     )
 }
