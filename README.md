@@ -45,3 +45,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
     * This essentially creates an environment map out of the scene itself.
     * the 'frames' attribute tells how many frames the CubeCamera should render for. Here we set it to 'Infinity', meaning it should render for each frame
     * Passing in 3d objects as children into CubeCamera exempts them from being rendered in the CubeCamera
+
+---
+
+Node version: 20.10.0
+npm version: 10.3.0
