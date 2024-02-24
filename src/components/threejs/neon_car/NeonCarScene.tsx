@@ -2,16 +2,16 @@
 
 import {Canvas} from "@react-three/fiber";
 import {CubeCamera, Environment, OrbitControls, PerspectiveCamera} from "@react-three/drei";
-import Ground from "@/components/threejs/objects/Ground";
-import Car from "@/components/threejs/objects/Car";
+import Ground from "@/components/threejs/neon_car/Ground";
+import Car from "@/components/threejs/neon_car/Car";
 import {Color, PCFSoftShadowMap, Vector2} from "three";
-import Rings from "@/components/threejs/objects/Rings";
-import FloatingBoxes from "@/components/threejs/objects/FloatingBoxes";
+import Rings from "@/components/threejs/neon_car/Rings";
+import FloatingBoxes from "@/components/threejs/neon_car/FloatingBoxes";
 import {Bloom, ChromaticAberration, DepthOfField, EffectComposer} from "@react-three/postprocessing";
 import {BlendFunction} from 'postprocessing';
-import FloatingGrid from "@/components/threejs/objects/FloatingGrid";
+import FloatingGrid from "@/components/threejs/neon_car/FloatingGrid";
 
-export default function ThreeJsScene() {
+export default function NeonCarScene() {
 
     return (
         <Canvas
