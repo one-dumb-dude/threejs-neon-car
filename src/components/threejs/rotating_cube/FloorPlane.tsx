@@ -24,7 +24,7 @@ export default function FloorPlane() {
     diffuseMap.colorSpace = LinearSRGBColorSpace;
 
     return (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow >
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
             <planeGeometry args={[10, 10]}/>
             <meshPhysicalMaterial
                 map={diffuseMap}
@@ -32,6 +32,7 @@ export default function FloorPlane() {
                 metalnessMap={metallicMap}
                 roughnessMap={smoothMap}
                 aoMap={aoMap}
+                aoMapIntensity={1}
             />
         </mesh>
     )

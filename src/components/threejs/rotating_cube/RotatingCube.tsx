@@ -1,9 +1,12 @@
-import {useEffect, useRef} from "react";
+import {useContext, useEffect, useRef} from "react";
 import {LinearSRGBColorSpace, Mesh, NoColorSpace, TextureLoader, Vector3} from "three";
 import {useFrame, useLoader} from "@react-three/fiber";
+import CubeContext from "@/components/threejs/rotating_cube/context/CubeContext";
 
 export default function RotatingCube() {
     const cubeRef = useRef<Mesh>(null);
+    const {setPosition} = useContext(CubeContext);
+
     const movement = useRef({ w: false, a: false, s: false, d: false });
     const [aoMap, diffuseMap, heightMap, metallicMap, normalMap, smoothMap ] = useLoader(TextureLoader, [
         '/textures/cube/tile_ao.bmp',
@@ -50,22 +53,24 @@ export default function RotatingCube() {
 
     useFrame((_, delta) => {
         if (cubeRef.current) {
-            cubeRef.current.rotation.x += 0.01;
-            cubeRef.current.rotation.y += 0.01;
+            cubeRef.current.rotation.x += 0.005;
+            cubeRef.current.rotation.y += 0.005;
 
             // Update position based on keys pressed
-            const speed = 0.05;
+            const speed = 0.025;
             const direction = new Vector3();
             if (movement.current.w) direction.z -= speed;
             if (movement.current.s) direction.z += speed;
             if (movement.current.a) direction.x -= speed;
             if (movement.current.d) direction.x += speed;
             cubeRef.current.position.add(direction);
+
+            setPosition(cubeRef.current.position.toArray());
         }
     });
 
     return (
-        <mesh ref={cubeRef} position={[0, 2, 0]} receiveShadow castShadow>
+        <mesh ref={cubeRef} position={[0, 1.5, 0]} receiveShadow castShadow>
             <boxGeometry args={[1, 1, 1]}/>
             <meshPhysicalMaterial
                 map={diffuseMap}
