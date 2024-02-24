@@ -6,7 +6,7 @@ import {Mesh} from "three";
 export default function Car() {
     const gltf = useLoader(
         GLTFLoader,
-        '/glbs/bmw_850i_e31.glb'
+        '/glbs/bmw_m6_gt3_clean.glb'
     );
 
     useEffect(() => {

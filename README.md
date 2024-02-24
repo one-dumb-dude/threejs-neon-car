@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+---
+
+## The Car Scene
+
+1. <b>MeshReflectorMaterial</b> - This created a beautiful ground in this scene, we used a roughness map and a normal map to create the effects.  MeshReflectorMaterial has many attributes.
+2. <b>CubeCamera:</b>
+    * This essentially creates an environment map out of the scene itself.
+    * the 'frames' attribute tells how many frames the CubeCamera should render for. Here we set it to 'Infinity', meaning it should render for each frame
+    * Passing in 3d objects as children into CubeCamera exempts them from being rendered in the CubeCamera

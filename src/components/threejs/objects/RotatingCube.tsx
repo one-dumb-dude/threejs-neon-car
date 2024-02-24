@@ -48,7 +48,7 @@ export default function RotatingCube() {
         };
     }, []);
 
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (cubeRef.current) {
             cubeRef.current.rotation.x += 0.01;
             cubeRef.current.rotation.y += 0.01;
@@ -65,7 +65,7 @@ export default function RotatingCube() {
     });
 
     return (
-        <mesh ref={cubeRef} receiveShadow castShadow>
+        <mesh ref={cubeRef} position={[0, 2, 0]} receiveShadow castShadow>
             <boxGeometry args={[1, 1, 1]}/>
             <meshPhysicalMaterial
                 map={diffuseMap}
