@@ -1,6 +1,5 @@
 'use client';
 import {Canvas} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
 import FloorPlane from "@/components/threejs/rotating_cube/FloorPlane";
 import RotatingCube from "@/components/threejs/rotating_cube/RotatingCube";
 import SpotLightComp from "@/components/threejs/rotating_cube/SpotLightComp";

@@ -19,10 +19,7 @@ export default function NeonCarScene() {
                 width: '100%',
                 height: '100%'
             }}
-            onCreated={({gl}) => {
-                gl.shadowMap.enabled = true;
-                gl.shadowMap.type = PCFSoftShadowMap; // Consider using soft shadows for better lighting
-            }}
+            shadows
         >
             <color attach="background" args={[0, 0, 0]}/>
 
