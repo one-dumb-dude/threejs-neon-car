@@ -26,6 +26,6 @@ export default function PerspectiveCameraComp() {
         }
     })
     return (
-        <PerspectiveCamera ref={cameraRef} makeDefault fov={75} position={[2.5, 0, 2.5]}/>
+        <PerspectiveCamera ref={cameraRef} makeDefault fov={75} position={[2.5, 0, -2]}/>
     )
 }

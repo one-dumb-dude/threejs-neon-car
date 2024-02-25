@@ -51,13 +51,14 @@ export default function RotatingCube() {
         };
     }, []);
 
+    // Update position based on keys pressed
+    const speed = 0.025;
+
     useFrame((_, delta) => {
         if (cubeRef.current) {
             cubeRef.current.rotation.x += 0.005;
             cubeRef.current.rotation.y += 0.005;
 
-            // Update position based on keys pressed
-            const speed = 0.025;
             const direction = new Vector3();
             if (movement.current.w) direction.z -= speed;
             if (movement.current.s) direction.z += speed;
