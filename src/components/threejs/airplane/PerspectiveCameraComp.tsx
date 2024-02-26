@@ -20,12 +20,12 @@ export default function PerspectiveCameraComp() {
             const elapsedTime = clock.getElapsedTime();
             // cameraRef.current.position.x = Math.sin(elapsedTime) * 10;
             // cameraRef.current.position.z = Math.cos(elapsedTime) * 10;
-            // cameraRef.current.lookAt(...position);
+            cameraRef.current.lookAt(...position);
             // cameraRef.current.zoom = ((Math.sin(elapsedTime) + 2) * (7 - 1) / 2) + 1;
             cameraRef.current.updateProjectionMatrix();
         }
     })
     return (
-        <PerspectiveCamera ref={cameraRef} makeDefault fov={75} position={[2.5, 0, -2]}/>
+        <PerspectiveCamera ref={cameraRef} makeDefault fov={75} position={[3, 0, -2.5]}/>
     )
 }

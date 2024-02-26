@@ -5,6 +5,7 @@ import AirplaneModel from "@/components/threejs/airplane/AirplaneModel";
 import PerspectiveCameraComp from "@/components/threejs/airplane/PerspectiveCameraComp";
 import AirplaneContext from "@/components/threejs/airplane/contexts/AirplaneContext";
 import {useState} from "react";
+import DroneModel from "@/components/threejs/airplane/DroneModel";
 
 export default function AirplaneScene() {
     const [position, setPosition] = useState<[number, number, number]>([0, 0, 0]);
@@ -17,6 +18,8 @@ export default function AirplaneScene() {
                 <Environment files="/hdris/rustig_koppie_puresky_1k.hdr" background/>
 
                 <AirplaneModel/>
+
+                <DroneModel />
 
                 <PerspectiveCameraComp/>
 

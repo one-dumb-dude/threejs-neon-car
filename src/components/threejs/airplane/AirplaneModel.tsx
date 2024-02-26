@@ -22,9 +22,11 @@ export default function AirplaneModel() {
         const keydown = (event: KeyboardEvent) => {
             switch (event.key.toLowerCase()) {
                 case 'w':
+                case 'arrowup':
                     movement.current.w = true;
                     break;
                 case 's':
+                case 'arrowdown':
                     movement.current.s = true;
                     break;
                 default:
@@ -35,9 +37,11 @@ export default function AirplaneModel() {
         const keyup = (event: KeyboardEvent) => {
             switch (event.key.toLowerCase()) {
                 case 'w':
+                case 'arrowup':
                     movement.current.w = false;
                     break;
                 case 's':
+                case 'arrowdown':
                     movement.current.s = false;
                     break;
                 default:
@@ -55,39 +59,34 @@ export default function AirplaneModel() {
 
     const amplitude = 0.075;
     const frequency = .25;
-    const pitchAmplitude = 0.2; // Controls the amount of pitch change, adjust as needed
+    const movingPitchAmplitude = 0.3; // Controls the amount of pitch change, adjust as needed
     const idlePitchAmplitude = 0.1; // Controls the amount of pitch change, adjust as needed
 
     let altitude = useRef(0);
     const movementSpeed = 0.005;
 
 
-    useFrame(({clock}, delta) => {
+    useFrame(({clock}) => {
         const elapsedTime = clock.getElapsedTime();
-
-        // airplaneGlb.scene.position.y = Math.sin(elapsedTime * frequency) * amplitude;
+        let newYPosition: number;
+        let newZPosition: number;
 
         if (movement.current.w) {
             altitude.current += movementSpeed;
-            airplaneGlb.scene.rotation.z = -pitchAmplitude;
-        }
-
-        if (movement.current.s) {
+            newYPosition = altitude.current;
+            newZPosition = -movingPitchAmplitude;
+        } else if (movement.current.s) {
             altitude.current -= movementSpeed;
-            airplaneGlb.scene.rotation.z = pitchAmplitude;
+            newYPosition = altitude.current;
+            newZPosition = movingPitchAmplitude;
+        } else {
+            newYPosition = altitude.current + Math.sin(elapsedTime * frequency) * amplitude;
+            // To rotate the airplane, take the cosine (the derivative of sine) to get the slope
+            newZPosition = Math.cos(elapsedTime * frequency) * -idlePitchAmplitude;
         }
 
-        // if (!movement.current.w && !movement.current.s) {
-        //     airplaneGlb.scene.position.y = altitude + Math.sin(elapsedTime * frequency) * amplitude;
-        //     // To rotate the airplane, take the cosine (the derivative of sine) to get the slope
-        //     // Apply the rotation to the airplane
-        //     airplaneGlb.scene.rotation.z = Math.cos(elapsedTime * frequency) * -idlePitchAmplitude;
-        // }
-
-
-        console.log(altitude.current)
-
-        airplaneGlb.scene.position.y = altitude.current;
+        airplaneGlb.scene.position.y = newYPosition;
+        airplaneGlb.scene.rotation.z = newZPosition;
 
         if (setPosition) {
             setPosition(airplaneGlb.scene.position.toArray())
