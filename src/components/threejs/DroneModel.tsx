@@ -1,9 +1,11 @@
-import {Group, Mesh, Object3DEventMap} from "three";
+import {Box3, Group, Mesh, Object3DEventMap} from "three";
 import {useFrame, useLoader} from "@react-three/fiber";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {useEffect, useRef} from "react";
 
-export default function DroneModel({altitude}: { altitude: number }) {
+export default function DroneModel({altitude, onBoundingBoxChange}: { altitude: number, onBoundingBoxChange: any }) {
+
+    const boundingBox = new Box3();
 
     const droneGlb = useLoader(GLTFLoader, 'glbs/airplane/ski-fi_drone_free.glb');
     const droneRef = useRef< Group<Object3DEventMap> | null>(null);
@@ -27,11 +29,16 @@ export default function DroneModel({altitude}: { altitude: number }) {
             }
         });
 
+        if (droneRef.current) {
+            boundingBox.setFromObject(clone);
+        }
+
         droneRef.current = clone;
-    }, [ droneGlb]);
+
+    }, [boundingBox, droneGlb]);
 
     const frequency = 1.35;
-    const amplitude = .15;
+    const amplitude = .25;
 
     useFrame(({clock}) => {
         const elapsedTime = clock.getElapsedTime();
@@ -41,7 +48,9 @@ export default function DroneModel({altitude}: { altitude: number }) {
         }
 
         if (droneRef.current) {
-            droneRef.current.position.set(droneXPosition.current += droneXVelocity, altitude + Math.sin(elapsedTime * frequency) * amplitude, 0);
+            droneRef.current.position.x = droneXPosition.current += droneXVelocity;
+            const boundingBox = new Box3().setFromObject(droneRef.current);
+            onBoundingBoxChange(boundingBox);
         }
 
     });

@@ -1,10 +1,11 @@
 import {useFrame, useLoader} from "@react-three/fiber";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {useContext, useEffect, useRef} from "react";
-import {Mesh} from "three";
+import {Box3, Group, Mesh, Object3D, Object3DEventMap} from "three";
 import AirplaneContext from "@/components/threejs/airplane/contexts/AirplaneContext";
 
-export default function AirplaneModel() {
+export default function AirplaneModel({onBoundingBoxChange}: { onBoundingBoxChange: any }) {
+    const airplaneRef = useRef<Object3D>(null);
     const airplaneGlb = useLoader(GLTFLoader, '/glbs/airplane/airplane-no-wheels.glb');
     const {setPosition} = useContext(AirplaneContext);
 
@@ -92,9 +93,13 @@ export default function AirplaneModel() {
             setPosition(airplaneGlb.scene.position.toArray())
         }
 
+        if (airplaneRef.current) {
+            const boundingBox = new Box3().setFromObject(airplaneRef.current);
+            onBoundingBoxChange(boundingBox);
+        }
     });
 
     return (
-        <primitive object={airplaneGlb.scene}></primitive>
+        <primitive object={airplaneGlb.scene} ref={airplaneRef} ></primitive>
     )
 }
