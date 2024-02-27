@@ -6,6 +6,7 @@ import SpotLightComp from "@/components/threejs/rotating_cube/SpotLightComp";
 import CubeContext from "@/components/threejs/rotating_cube/context/CubeContext";
 import {useState} from "react";
 import OrbitControlsComp from "@/components/threejs/rotating_cube/OrbitControlsComp";
+import SmoothCurve from "@/components/threejs/rotating_cube/SmoothCurve";
 
 
 export default function RotatingCubeScene() {
@@ -16,6 +17,7 @@ export default function RotatingCubeScene() {
             <Canvas>
                 <ambientLight intensity={0.2}/>
                 <SpotLightComp/>
+                <SmoothCurve />
                 <RotatingCube/>
                 <FloorPlane/>
                 <OrbitControlsComp />
