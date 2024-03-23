@@ -1,14 +1,14 @@
 import {Canvas, useThree} from '@react-three/fiber';
-import {Stats, OrbitControls, PerspectiveCamera} from '@react-three/drei';
-import {useControls} from 'leva';
+import {Stats, OrbitControls, PerspectiveCamera, useHelper} from '@react-three/drei';
+import {folder, useControls} from 'leva';
 import {useEffect, useRef} from "react";
-import {BoxHelper, DoubleSide, Group, Mesh} from "three";
+import {BoxHelper, DoubleSide, Group, Mesh, SpotLight, SpotLightHelper} from "three";
 
 
 function SceneContent() {
     const boxRef = useRef<Mesh>(null);
-    const groupRef = useRef<Group>(null)
-    const {scene} = useThree();
+    const groupRef = useRef<Group>(null);
+    const spotlightRef = useRef<SpotLight>(null);
 
     const {
         boxPositionX,
@@ -24,18 +24,30 @@ function SceneContent() {
         groupRotationY,
         groupRotationZ
     } = useControls({
-        boxPositionX: {value: 0, min: -2, max: 2, step: 0.005},
-        boxPositionY: {value: 0, min: -2, max: 2, step: 0.005},
-        boxPositionZ: {value: 0, min: -2, max: 2, step: 0.005},
-        boxRotationX: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
-        boxRotationY: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
-        boxRotationZ: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
-        groupPositionX: {value: 0, min: -2, max: 2, step: 0.01},
-        groupPositionY: {value: 0, min: -2, max: 2, step: 0.01},
-        groupPositionZ: {value: 0, min: -2, max: 2, step: 0.01},
-        groupRotationX: {value: -Math.PI / 2, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01},
-        groupRotationY: {value: 0, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01},
-        groupRotationZ: {value: 0, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01}
+        box: folder({
+            position: folder({
+                boxPositionX: {value: 0, min: -2, max: 2, step: 0.005},
+                boxPositionY: {value: 0, min: -2, max: 2, step: 0.005},
+                boxPositionZ: {value: 0, min: -2, max: 2, step: 0.005},
+            }),
+            rotation: folder({
+                boxRotationX: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
+                boxRotationY: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
+                boxRotationZ: {value: 0, min: 0, max: Math.PI * 2, step: 0.01},
+            })
+        }),
+        group: folder({
+            position: folder({
+                groupPositionX: {value: 0, min: -2, max: 2, step: 0.01},
+                groupPositionY: {value: 0, min: -2, max: 2, step: 0.01},
+                groupPositionZ: {value: 0, min: -2, max: 2, step: 0.01},
+            }),
+            rotation: folder({
+                groupRotationX: {value: -Math.PI / 2, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01},
+                groupRotationY: {value: 0, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01},
+                groupRotationZ: {value: 0, min: -Math.PI * 2, max: Math.PI * 2, step: 0.01}
+            })
+        })
     });
 
     useEffect(() => {
@@ -60,18 +72,14 @@ function SceneContent() {
         }
     }, [groupPositionX, groupPositionY, groupPositionZ, groupRotationX, groupRotationY, groupRotationZ]);
 
-    useEffect(() => {
-        if (boxRef.current) {
-            const helper = new BoxHelper(boxRef.current, 0xffff00);
-            scene.add(helper);
-        }
-    }, [scene]);
+    useHelper(boxRef, BoxHelper, "#b919d0")
+    useHelper(spotlightRef, SpotLightHelper, "#ce2626")
 
     return (
         <>
             <PerspectiveCamera makeDefault position={[2, 3, 3]}/>
             <ambientLight intensity={0.2}/>
-            <spotLight position={[0, 1, 1]} castShadow/>
+            <spotLight ref={spotlightRef} position={[0, 1, 1]} castShadow/>
 
             <group ref={groupRef}>
                 <mesh ref={boxRef} receiveShadow castShadow>
