@@ -1,7 +1,7 @@
 import {Canvas, useFrame} from "@react-three/fiber";
-import {PerspectiveCamera, PointerLockControls} from "@react-three/drei";
-import {DoubleSide, Vector3} from "three";
-import {useEffect, useRef} from "react";
+import {PerspectiveCamera, PointerLockControls, PointerLockControlsProps} from "@react-three/drei";
+import {DoubleSide, Object3D, Vector3} from "three";
+import {RefObject, useEffect, useRef} from "react";
 
 const getRandomNumber = (min: number, max: number) => {
     const longRandomNumber = Math.random() * (max - min) + min;
@@ -32,14 +32,14 @@ function FloorMesh() {
 }
 
 function PointerLockContent() {
-    const controlsRef = useRef(null);
+    const controlsRef = useRef<PointerLockControlsProps>(null);
     const moveForward = useRef(false);
     const moveBackward = useRef(false);
     const moveLeft = useRef(false);
     const moveRight = useRef(false);
 
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: KeyboardEvent) => {
             switch (event.code) {
                 case 'KeyW':
                     moveForward.current = true;
@@ -56,7 +56,7 @@ function PointerLockContent() {
             }
         };
 
-        const handleKeyUp = (event) => {
+        const handleKeyUp = (event: KeyboardEvent) => {
             switch (event.code) {
                 case 'KeyW':
                     moveForward.current = false;
@@ -147,7 +147,7 @@ function PointerLockContent() {
             {boxes}
             <BoxMesh position={[1, 0, 1.5]}/>
             <FloorMesh/>
-            <PointerLockControls ref={controlsRef}/>
+            <PointerLockControls ref={controlsRef as RefObject<any>}/>
         </>
     )
 }
