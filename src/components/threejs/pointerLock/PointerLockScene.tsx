@@ -1,6 +1,7 @@
-import {Canvas} from "@react-three/fiber";
+import {Canvas, useFrame} from "@react-three/fiber";
 import {PerspectiveCamera, PointerLockControls} from "@react-three/drei";
-import {DoubleSide} from "three";
+import {DoubleSide, Vector3} from "three";
+import {useEffect, useRef} from "react";
 
 const getRandomNumber = (min: number, max: number) => {
     const longRandomNumber = Math.random() * (max - min) + min;
@@ -31,6 +32,83 @@ function FloorMesh() {
 }
 
 function PointerLockContent() {
+    const controlsRef = useRef(null);
+    const moveForward = useRef(false);
+    const moveBackward = useRef(false);
+    const moveLeft = useRef(false);
+    const moveRight = useRef(false);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            switch (event.code) {
+                case 'KeyW':
+                    moveForward.current = true;
+                    break;
+                case 'KeyS':
+                    moveBackward.current = true;
+                    break;
+                case 'KeyA':
+                    moveLeft.current = true;
+                    break;
+                case 'KeyD':
+                    moveRight.current = true;
+                    break;
+            }
+        };
+
+        const handleKeyUp = (event) => {
+            switch (event.code) {
+                case 'KeyW':
+                    moveForward.current = false;
+                    break;
+                case 'KeyS':
+                    moveBackward.current = false;
+                    break;
+                case 'KeyA':
+                    moveLeft.current = false;
+                    break;
+                case 'KeyD':
+                    moveRight.current = false;
+                    break;
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
+        };
+    }, []);
+
+    useFrame((state, delta) => {
+        const controls = controlsRef.current;
+        const camera = state.camera;
+
+        if (controls && controls.isLocked) {
+            const speed = 5; // Adjust the speed as needed
+            const direction = new Vector3();
+
+            if (moveForward.current) {
+                direction.add(camera.getWorldDirection(new Vector3()).multiplyScalar(speed * delta));
+            }
+
+            if (moveBackward.current) {
+                direction.add(camera.getWorldDirection(new Vector3()).multiplyScalar(-speed * delta));
+            }
+
+            if (moveLeft.current) {
+                direction.add(camera.getWorldDirection(new Vector3()).cross(camera.up).multiplyScalar(-speed * delta));
+            }
+
+            if (moveRight.current) {
+                direction.add(camera.getWorldDirection(new Vector3()).cross(camera.up).multiplyScalar(speed * delta));
+            }
+
+            camera.position.add(direction);
+        }
+    });
 
     const emptyArray = new Array(150).fill(null);
 
@@ -69,7 +147,7 @@ function PointerLockContent() {
             {boxes}
             <BoxMesh position={[1, 0, 1.5]}/>
             <FloorMesh/>
-            <PointerLockControls/>
+            <PointerLockControls ref={controlsRef}/>
         </>
     )
 }
