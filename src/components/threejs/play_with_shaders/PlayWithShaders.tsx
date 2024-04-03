@@ -1,7 +1,7 @@
 // To start over, copy all of FadingSphere.tsx and paste it here!
-import React, { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { ShaderMaterial } from 'three';
+import React, {useRef} from 'react';
+import {useFrame} from '@react-three/fiber';
+import {ShaderMaterial} from 'three';
 
 const vertexShader = `
   void main() {
@@ -20,7 +20,7 @@ const fragmentShader = `
 export default function PlayWithShaders() {
     const materialRef = useRef<ShaderMaterial>(null);
 
-    useFrame(({ clock }) => {
+    useFrame(({clock}) => {
         const elapsedTime = clock.getElapsedTime();
         const opacity = Math.max(1.0 - elapsedTime / 5, 0); // Fades over 5 seconds
 
@@ -30,18 +30,20 @@ export default function PlayWithShaders() {
     });
 
     return (
-        <mesh>
-            <sphereGeometry args={[1, 32, 32]} />
-            <shaderMaterial
-                ref={materialRef}
-                vertexShader={vertexShader}
-                fragmentShader={fragmentShader}
-                uniforms={{
-                    opacity: { value: 1.0 }
-                }}
-                transparent
-            />
-        </mesh>
+        <>
+            <mesh>
+                <sphereGeometry args={[1, 32, 32]}/>
+                <shaderMaterial
+                    ref={materialRef}
+                    vertexShader={vertexShader}
+                    fragmentShader={fragmentShader}
+                    uniforms={{
+                        opacity: {value: 1.0}
+                    }}
+                    transparent
+                />
+            </mesh>
+        </>
     );
 }
 

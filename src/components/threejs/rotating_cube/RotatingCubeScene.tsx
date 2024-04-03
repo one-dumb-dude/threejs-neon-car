@@ -17,7 +17,7 @@ export default function RotatingCubeScene() {
             <Canvas>
                 <ambientLight intensity={0.2}/>
                 <SpotLightComp/>
-                <SmoothCurve />
+                {/*<SmoothCurve />*/}
                 <RotatingCube/>
                 <FloorPlane/>
                 <OrbitControlsComp />

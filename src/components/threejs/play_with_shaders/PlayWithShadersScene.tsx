@@ -6,8 +6,6 @@ import PlayWithShaders from "@/components/threejs/play_with_shaders/PlayWithShad
 export default function PlayWithShadersScene() {
     return (
         <Canvas>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
             <PlayWithShaders />
         </Canvas>
     )

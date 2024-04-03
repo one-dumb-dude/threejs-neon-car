@@ -1,6 +1,7 @@
 import {Canvas, useFrame} from "@react-three/fiber";
-import {PerspectiveCamera, PointerLockControls, PointerLockControlsProps} from "@react-three/drei";
-import {DoubleSide, Object3D, Vector3} from "three";
+import {PerspectiveCamera, PointerLockControls, PointerLockControlsProps, useHelper} from "@react-three/drei";
+import {DirectionalLight, DirectionalLightHelper, DoubleSide, Vector3} from "three";
+import {Environment} from '@react-three/drei'
 import {RefObject, useEffect, useRef} from "react";
 
 const getRandomNumber = (min: number, max: number) => {
@@ -17,26 +18,44 @@ function BoxMesh({color = [1, 0, 0], position = [0, 0, 0], scale = [1, 1, 1]}) {
             castShadow
         >
             <boxGeometry args={[1, 1, 1]}/>
-            <meshPhysicalMaterial color={[color[0], color[1], color[2]]} wireframe/>
+            <meshPhysicalMaterial color={[color[0], color[1], color[2]]}/>
         </mesh>
     )
 }
 
 function FloorMesh() {
     return (
-        <mesh rotation-x={Math.PI / 2}>
+        <mesh rotation-x={Math.PI / 2} receiveShadow>
             <planeGeometry args={[100, 100, 50, 50]}/>
-            <meshPhysicalMaterial color={[1.0, 0, 0]} side={DoubleSide} wireframe/>
+            <meshPhysicalMaterial color={[1.0, 0, 0]} side={DoubleSide}/>
         </mesh>
     )
 }
 
 function PointerLockContent() {
-    const controlsRef = useRef<PointerLockControlsProps>(null);
+    const controlsRef = useRef<PointerLockControlsProps | null>(null);
+    const directionalLightRef = useRef<DirectionalLight | null>(null)
     const moveForward = useRef(false);
     const moveBackward = useRef(false);
     const moveLeft = useRef(false);
     const moveRight = useRef(false);
+
+    useEffect(() => {
+        if (directionalLightRef.current) {
+            const directionalLight = directionalLightRef.current;
+            const expanse = 50;
+
+            directionalLight.shadow.camera.top = expanse;
+            directionalLight.shadow.camera.bottom = -expanse;
+            directionalLight.shadow.camera.left = -expanse;
+            directionalLight.shadow.camera.right = expanse;
+            directionalLight.shadow.camera.near = 1;
+            directionalLight.shadow.camera.far = 40;
+            directionalLight.shadow.mapSize.width = 1024 * 2;
+            directionalLight.shadow.mapSize.height = 1024 * 2;
+            directionalLight?.lookAt(new Vector3(0, 0, 0));
+        }
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -129,9 +148,9 @@ function PointerLockContent() {
         ];
 
         const scale = [
-            getRandomNumber(0, 3),
-            getRandomNumber(0, 5),
-            getRandomNumber(0, 2)
+            getRandomNumber(1, 3),
+            getRandomNumber(1, 5),
+            getRandomNumber(1, 2)
         ]
 
         return (
@@ -139,13 +158,24 @@ function PointerLockContent() {
         )
     });
 
+    useHelper(directionalLightRef as any, DirectionalLightHelper, 1);
+
     return (
         <>
+            <Environment files="/hdris/kloofendal_48d_partly_cloudy_puresky_2k.hdr" background/>
             <PerspectiveCamera makeDefault position={[2, 3, 3]}/>
-            <pointLight position={[2, 2, 2]} intensity={1}/>
-            <ambientLight intensity={1}/>
+            <hemisphereLight
+                position={[0, 50, 0]}
+                color={[0.6, 0.75, 0.5]}
+                groundColor={[0.01, 0.5, 0.5]}
+            />
+            <directionalLight
+                ref={directionalLightRef}
+                position={[5, 30, 5]}
+                intensity={0.75}
+                castShadow
+            />
             {boxes}
-            <BoxMesh position={[1, 0, 1.5]}/>
             <FloorMesh/>
             <PointerLockControls ref={controlsRef as RefObject<any>}/>
         </>
@@ -153,7 +183,6 @@ function PointerLockContent() {
 }
 
 export default function PointerLockScene() {
-
     return (
         <Canvas shadows>
             <PointerLockContent/>
