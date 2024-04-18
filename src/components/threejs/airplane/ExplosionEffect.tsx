@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Sphere } from "@react-three/drei";
-import { Mesh, Vector3 } from "three";
+import {Mesh, MeshStandardMaterial, Vector3} from "three";
 
 type ExplosionEffectProps = {
     position: Vector3;
@@ -10,7 +10,7 @@ type ExplosionEffectProps = {
 
 export default function ExplosionEffect({ position, onComplete }: ExplosionEffectProps) {
     const meshRef = useRef<Mesh>(null);
-    const materialRef = useRef<THREE.MeshStandardMaterial>(null);
+    const materialRef = useRef<MeshStandardMaterial>(null);
     const startTime = useRef(0);
 
     useEffect(() => {

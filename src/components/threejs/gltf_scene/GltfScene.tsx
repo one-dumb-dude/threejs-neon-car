@@ -87,7 +87,8 @@ export default function GltfScene() {
                 gl.toneMapping = ACESFilmicToneMapping;
                 gl.toneMappingExposure = 5.0;
             }}
-            shadows>
+            shadows
+        >
             <GltfSceneContent/>
         </Canvas>
     );
