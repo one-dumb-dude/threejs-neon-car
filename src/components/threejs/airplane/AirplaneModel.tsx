@@ -1,7 +1,7 @@
 import {useFrame, useLoader} from "@react-three/fiber";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {useContext, useEffect, useRef} from "react";
-import {Box3, Group, Mesh, Object3D, Object3DEventMap} from "three";
+import {Box3, Group, MathUtils, Mesh, Object3D, Object3DEventMap} from "three";
 import AirplaneContext from "@/components/threejs/airplane/contexts/AirplaneContext";
 
 export default function AirplaneModel({onBoundingBoxChange}: { onBoundingBoxChange: any }) {
@@ -75,7 +75,7 @@ export default function AirplaneModel({onBoundingBoxChange}: { onBoundingBoxChan
         if (movement.current.w) {
             altitude.current += movementSpeed;
             newYPosition = altitude.current;
-            newZPosition = -movingPitchAmplitude;
+            newZPosition = MathUtils.lerp(0, -movingPitchAmplitude, 1);
         } else if (movement.current.s) {
             altitude.current -= movementSpeed;
             newYPosition = altitude.current;
@@ -100,6 +100,6 @@ export default function AirplaneModel({onBoundingBoxChange}: { onBoundingBoxChan
     });
 
     return (
-        <primitive object={airplaneGlb.scene} ref={airplaneRef} ></primitive>
+        <primitive object={airplaneGlb.scene} ref={airplaneRef}></primitive>
     )
 }
