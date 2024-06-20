@@ -1,23 +1,36 @@
 import {Canvas, useFrame} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei";
-import {Color, DoubleSide, Mesh, MeshPhysicalMaterial} from "three";
+import {Color, DoubleSide, Mesh, MeshPhysicalMaterial, Vector3} from "three";
 import {Suspense, useRef, useState} from "react";
 import {Physics, RapierRigidBody, RigidBody} from "@react-three/rapier";
 
 function RapierContext() {
-    const [hover, setHover] = useState(false);
-    const cubeRigidBodyRef = useRef<RapierRigidBody | null>(null);
-    const cubeMeshRef = useRef<Mesh | null>(null);
-    const cubeMaterialRef = useRef<MeshPhysicalMaterial | null>(null);
+    const hoverRef = useRef<Boolean>(false);
+
+    const moveCubeRigidBodyRef = useRef<RapierRigidBody>(null);
+    const moveCubeMeshRef = useRef<Mesh>(null);
+
+    const cubeRigidBodyRef = useRef<RapierRigidBody>(null);
+    const cubeMeshRef = useRef<Mesh>(null);
+    const cubeMaterialRef = useRef<MeshPhysicalMaterial>(null);
 
     const moveCube = () => {
         if (cubeRigidBodyRef.current) {
-            cubeRigidBodyRef.current.applyImpulse({x: 0.7, y: 2, z: 0}, true);
+            cubeRigidBodyRef.current.applyImpulse({x: 0.7, y: 2, z: 0}, false);
         }
     }
 
+    let defaultPosition = new Vector3(3, 0.26, 0);
+
     useFrame(() => {
-        const targetColor = hover ? new Color(0.55, 0.7, 0.23) : new Color(0.5, 0.25, 1);
+
+        if (moveCubeRigidBodyRef.current) {
+            defaultPosition.x -= 0.005;
+            moveCubeRigidBodyRef.current.setNextKinematicTranslation(defaultPosition);
+        }
+
+        const targetColor = hoverRef.current ? new Color(0.55, 0.7, 0.23) : new Color(0.5, 0.25, 1);
+
         if (cubeMaterialRef.current) {
             cubeMaterialRef.current.color.lerp(targetColor, 0.1);
         }
@@ -36,13 +49,21 @@ function RapierContext() {
                 shadow-radius={4}
             />
             <Physics>
-                <RigidBody ref={cubeRigidBodyRef} position={[0, 3, 0]} colliders="cuboid">
+
+                <RigidBody ref={moveCubeRigidBodyRef} type="kinematicPosition" colliders="cuboid">
+                    <mesh ref={moveCubeMeshRef}>
+                        <boxGeometry args={[0.5, 0.5, 0.5]}/>
+                        <meshPhysicalMaterial color={[1.0, 0.5, 0.35]}/>
+                    </mesh>
+                </RigidBody>
+
+                <RigidBody ref={cubeRigidBodyRef} position={[0, 1, 0]} colliders="cuboid">
                     <mesh
                         ref={cubeMeshRef}
                         receiveShadow
                         castShadow
-                        onPointerEnter={() => setHover(true)}
-                        onPointerLeave={() => setHover(false)}
+                        onPointerEnter={() => hoverRef.current = true}
+                        onPointerLeave={() => hoverRef.current = false}
                         onClick={moveCube}
                     >
                         <boxGeometry args={[1, 1, 1]}/>
