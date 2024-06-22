@@ -13,6 +13,7 @@ function RapierContext() {
     const cubeRigidBodyRef = useRef<RapierRigidBody>(null);
     const cubeMeshRef = useRef<Mesh>(null);
     const cubeMaterialRef = useRef<MeshPhysicalMaterial>(null);
+    const cubeCollisionRef = useRef<Boolean>(false);
 
     const moveCube = () => {
         if (cubeRigidBodyRef.current) {
@@ -22,6 +23,16 @@ function RapierContext() {
 
     let defaultPosition = new Vector3(3, 0.26, 0);
 
+    const cubeColor = () => {
+        if (hoverRef.current) {
+            return new Color(0.55, 0.7, 0.23)
+        } else if (cubeCollisionRef.current) {
+            return new Color(0.85, 0.1, 0.1);
+        } else {
+            return new Color(0.5, 0.25, 1);
+        }
+    }
+
     useFrame(() => {
 
         if (moveCubeRigidBodyRef.current) {
@@ -29,7 +40,7 @@ function RapierContext() {
             moveCubeRigidBodyRef.current.setNextKinematicTranslation(defaultPosition);
         }
 
-        const targetColor = hoverRef.current ? new Color(0.55, 0.7, 0.23) : new Color(0.5, 0.25, 1);
+        const targetColor = cubeColor();
 
         if (cubeMaterialRef.current) {
             cubeMaterialRef.current.color.lerp(targetColor, 0.1);
@@ -50,14 +61,29 @@ function RapierContext() {
             />
             <Physics>
 
-                <RigidBody ref={moveCubeRigidBodyRef} type="kinematicPosition" colliders="cuboid">
+                <RigidBody
+                    ref={moveCubeRigidBodyRef}
+                    type="kinematicPosition"
+                    colliders="cuboid"
+                    onCollisionEnter={({other}) => {
+                        if(other.rigidBodyObject?.name === "cubeRigid") cubeCollisionRef.current = true
+                    }}
+                    onCollisionExit={({other}) => {
+                        if(other.rigidBodyObject?.name === "cubeRigid") cubeCollisionRef.current = false
+                    }}
+                >
                     <mesh ref={moveCubeMeshRef}>
                         <boxGeometry args={[0.5, 0.5, 0.5]}/>
                         <meshPhysicalMaterial color={[1.0, 0.5, 0.35]}/>
                     </mesh>
                 </RigidBody>
 
-                <RigidBody ref={cubeRigidBodyRef} position={[0, 1, 0]} colliders="cuboid">
+                <RigidBody
+                    ref={cubeRigidBodyRef}
+                    name="cubeRigid"
+                    position={[0, 1, 0]}
+                    colliders="cuboid"
+                >
                     <mesh
                         ref={cubeMeshRef}
                         receiveShadow
