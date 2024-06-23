@@ -1,7 +1,7 @@
-import {Canvas, useFrame} from "@react-three/fiber";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei";
 import {Color, DoubleSide, Mesh, MeshPhysicalMaterial, Vector3} from "three";
-import {Suspense, useEffect, useRef, useState} from "react";
+import {Suspense, useEffect, useRef} from "react";
 import {Physics, RapierRigidBody, RigidBody} from "@react-three/rapier";
 
 function RapierContext() {
@@ -17,13 +17,17 @@ function RapierContext() {
 
     const movement = useRef({w: false, a: false, s: false, d: false});
 
+    const speed = 0.01;
+    const direction = new Vector3(2, 0.5, 2);
+
+    const {camera} = useThree();
+    const cameraOffset = new Vector3(2, 2, 3);
+
     const moveCube = () => {
         if (cubeRigidBodyRef.current) {
             cubeRigidBodyRef.current.applyImpulse({x: 0.7, y: 2, z: 0}, false);
         }
     }
-
-    let defaultPosition = new Vector3(3, 0.26, 0);
 
     const cubeColor = () => {
         if (hoverRef.current) {
@@ -84,8 +88,6 @@ function RapierContext() {
         };
     }, []);
 
-    const speed = 0.01;
-    const direction = new Vector3(2, 0.5, 2);
 
     useFrame(() => {
 
@@ -106,7 +108,13 @@ function RapierContext() {
             if (movement.current.s) direction.z += speed;
             if (movement.current.a) direction.x -= speed;
             if (movement.current.d) direction.x += speed;
+            // you might be constantly setting the position unnecessarily
             moveCubeRigidBodyRef.current.setNextKinematicTranslation(direction);
+
+            const cubePosition = new Vector3(direction.x, direction.y, direction.z);
+            const desiredCameraPosition = cubePosition.clone().add(cameraOffset);
+            camera.position.lerp(desiredCameraPosition, 0.1);
+            camera.lookAt(cubePosition);
         }
     });
 
@@ -172,7 +180,7 @@ function RapierContext() {
                 </RigidBody>
 
             </Physics>
-            <OrbitControls/>
+            {/*<OrbitControls/>*/}
         </Suspense>
     )
 }
