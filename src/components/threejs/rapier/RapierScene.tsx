@@ -1,7 +1,7 @@
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
-import {Color, DoubleSide, Mesh, MeshPhysicalMaterial, Vector3} from "three";
+import {Color, DoubleSide, Mesh, MeshPhysicalMaterial, Quaternion, Vector3, Vector4} from "three";
 import {Suspense, useEffect, useRef} from "react";
-import {Physics, RapierRigidBody, RigidBody} from "@react-three/rapier";
+import {Physics, quat, RapierRigidBody, RigidBody} from "@react-three/rapier";
 
 function RapierContext() {
     const hoverRef = useRef<Boolean>(false);
@@ -117,7 +117,7 @@ function RapierContext() {
     }, []);
 
 
-    useFrame(() => {
+    useFrame((_state, delta) => {
 
         const targetColor = cubeColor();
 
@@ -150,7 +150,9 @@ function RapierContext() {
             const gamepadIndex = Array.from(gamepads).findIndex(gp => gp && gp.id === gamepadRef.current!.id);
 
             if (gamepadIndex !== -1) {
+
                 const gamepad = gamepads[gamepadIndex];
+
                 if (gamepad) {
                     // Left stick (horizontal movement)
                     const leftStickX = gamepad.axes[0];
@@ -177,6 +179,15 @@ function RapierContext() {
             }
         }
 
+        if (moveCubeRigidBodyRef.current) {
+            const curRotation = quat(moveCubeRigidBodyRef.current.rotation());
+            const incrementRotation = new Quaternion().setFromAxisAngle(
+                new Vector3(0,1,0), delta * 1.25
+            );
+            curRotation.multiply(incrementRotation);
+            moveCubeRigidBodyRef.current.setNextKinematicRotation(curRotation)
+        }
+
     });
 
     return (
@@ -191,7 +202,7 @@ function RapierContext() {
                 shadow-mapSize-height={2048}
                 shadow-radius={4}
             />
-            <Physics>
+            <Physics debug>
 
                 <RigidBody
                     ref={moveCubeRigidBodyRef}
