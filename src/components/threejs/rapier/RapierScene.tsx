@@ -15,6 +15,7 @@ function RapierContext() {
     const cubeCollisionRef = useRef<Boolean>(false);
 
     const movement = useRef({w: false, a: false, s: false, d: false, shift: false});
+    const gamepadRef = useRef<Gamepad | null>(null);
 
     const speed = 0.0125;
     const direction = new Vector3(2, 0.5, 2);
@@ -37,6 +38,16 @@ function RapierContext() {
             return new Color(0.5, 0.25, 1);
         }
     }
+
+    const handleGamepadConnected = (event: GamepadEvent) => {
+        console.log("A gamepad connected:", event.gamepad);
+        gamepadRef.current = event.gamepad;
+    };
+
+    const handleGamepadDisconnected = (event: GamepadEvent) => {
+        console.log("A gamepad disconnected:", event.gamepad);
+        gamepadRef.current = null;
+    };
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -93,22 +104,20 @@ function RapierContext() {
 
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
+        window.addEventListener("gamepadconnected", handleGamepadConnected);
+        window.addEventListener("gamepaddisconnected", handleGamepadDisconnected);
 
         // Cleanup the event listeners on component unmount
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
+            window.removeEventListener("gamepadconnected", handleGamepadConnected);
+            window.removeEventListener("gamepaddisconnected", handleGamepadDisconnected);
         };
     }, []);
 
 
     useFrame(() => {
-
-        // if (moveCubeRigidBodyRef.current) {
-        //     defaultPosition.x -= 0.005;
-        //     moveCubeRigidBodyRef.current.setNextKinematicTranslation(defaultPosition);
-        // }
-
 
         const targetColor = cubeColor();
 
@@ -116,8 +125,9 @@ function RapierContext() {
             cubeMaterialRef.current.color.lerp(targetColor, 0.1);
         }
 
+        const currentSpeed = movement.current.shift ? speed * 2 : speed; // Double speed when Shift is pressed
+
         if (moveCubeRigidBodyRef.current) {
-            const currentSpeed = movement.current.shift ? speed * 2 : speed; // Double speed when Shift is pressed
 
             if (movement.current.w) direction.z -= currentSpeed;
             if (movement.current.s) direction.z += currentSpeed;
@@ -132,6 +142,41 @@ function RapierContext() {
             camera.position.lerp(desiredCameraPosition, 0.1);
             camera.lookAt(cubePosition);
         }
+
+        // Gamepad input
+        if (gamepadRef.current) {
+            // We need to get the fresh state of the gamepad
+            const gamepads = navigator.getGamepads();
+            const gamepadIndex = Array.from(gamepads).findIndex(gp => gp && gp.id === gamepadRef.current!.id);
+
+            if (gamepadIndex !== -1) {
+                const gamepad = gamepads[gamepadIndex];
+                if (gamepad) {
+                    // Left stick (horizontal movement)
+                    const leftStickX = gamepad.axes[0];
+                    const leftStickY = gamepad.axes[1];
+
+                    // Right stick (vertical movement)
+                    const rightStickY = gamepad.axes[3]; // Use axis 3 for vertical movement
+
+                    // Apply dead zone
+                    const deadZone = 0.1;
+                    if (Math.abs(leftStickX) > deadZone) {
+                        direction.x += leftStickX * currentSpeed;
+                    }
+                    if (Math.abs(leftStickY) > deadZone) {
+                        direction.z += leftStickY * currentSpeed;
+                    }
+                    if (Math.abs(rightStickY) > deadZone) {
+                        direction.y -= rightStickY * currentSpeed; // Invert if needed
+                    }
+
+                    movement.current.shift = gamepad.buttons[0].pressed;
+
+                }
+            }
+        }
+
     });
 
     return (
