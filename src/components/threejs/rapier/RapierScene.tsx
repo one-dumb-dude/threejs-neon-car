@@ -1,5 +1,4 @@
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
 import {Color, DoubleSide, Mesh, MeshPhysicalMaterial, Vector3} from "three";
 import {Suspense, useEffect, useRef} from "react";
 import {Physics, RapierRigidBody, RigidBody} from "@react-three/rapier";
@@ -15,7 +14,7 @@ function RapierContext() {
     const cubeMaterialRef = useRef<MeshPhysicalMaterial>(null);
     const cubeCollisionRef = useRef<Boolean>(false);
 
-    const movement = useRef({w: false, a: false, s: false, d: false});
+    const movement = useRef({w: false, a: false, s: false, d: false, shift: false});
 
     const speed = 0.01;
     const direction = new Vector3(2, 0.5, 2);
@@ -54,6 +53,9 @@ function RapierContext() {
                 case "d":
                     movement.current.d = true;
                     break;
+                case "shift":
+                    movement.current.shift = true;
+                    break;
                 default:
                     break;
             }
@@ -72,6 +74,9 @@ function RapierContext() {
                     break;
                 case "d":
                     movement.current.d = false;
+                    break;
+                case "shift":
+                    movement.current.shift = false;
                     break;
                 default:
                     break;
@@ -104,10 +109,13 @@ function RapierContext() {
         }
 
         if (moveCubeRigidBodyRef.current) {
-            if (movement.current.w) direction.z -= speed;
-            if (movement.current.s) direction.z += speed;
-            if (movement.current.a) direction.x -= speed;
-            if (movement.current.d) direction.x += speed;
+            const currentSpeed = movement.current.shift ? speed * 2 : speed; // Double speed when Shift is pressed
+
+            if (movement.current.w) direction.z -= currentSpeed;
+            if (movement.current.s) direction.z += currentSpeed;
+            if (movement.current.a) direction.x -= currentSpeed;
+            if (movement.current.d) direction.x += currentSpeed;
+
             // you might be constantly setting the position unnecessarily
             moveCubeRigidBodyRef.current.setNextKinematicTranslation(direction);
 
@@ -180,7 +188,6 @@ function RapierContext() {
                 </RigidBody>
 
             </Physics>
-            {/*<OrbitControls/>*/}
         </Suspense>
     )
 }
