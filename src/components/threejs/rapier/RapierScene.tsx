@@ -16,7 +16,7 @@ function RapierContext() {
 
     const movement = useRef({w: false, a: false, s: false, d: false, shift: false});
 
-    const speed = 0.01;
+    const speed = 0.0125;
     const direction = new Vector3(2, 0.5, 2);
 
     const {camera} = useThree();
@@ -24,7 +24,7 @@ function RapierContext() {
 
     const moveCube = () => {
         if (cubeRigidBodyRef.current) {
-            cubeRigidBodyRef.current.applyImpulse({x: 0.7, y: 2, z: 0}, false);
+            cubeRigidBodyRef.current.applyImpulse({x: 0.7, y: 2, z: 0}, true);
         }
     }
 
@@ -42,15 +42,19 @@ function RapierContext() {
         const handleKeyDown = (event: KeyboardEvent) => {
             switch (event.key.toLowerCase()) {
                 case "w":
+                case "arrowup":
                     movement.current.w = true;
                     break;
                 case "a":
+                case "arrowleft":
                     movement.current.a = true;
                     break;
                 case "s":
+                case "arrowdown":
                     movement.current.s = true;
                     break;
                 case "d":
+                case "arrowright":
                     movement.current.d = true;
                     break;
                 case "shift":
@@ -64,15 +68,19 @@ function RapierContext() {
         const handleKeyUp = (event: KeyboardEvent) => {
             switch (event.key.toLowerCase()) {
                 case "w":
+                case "arrowup":
                     movement.current.w = false;
                     break;
                 case "a":
+                case "arrowleft":
                     movement.current.a = false;
                     break;
                 case "s":
+                case "arrowdown":
                     movement.current.s = false;
                     break;
                 case "d":
+                case "arrowright":
                     movement.current.d = false;
                     break;
                 case "shift":
